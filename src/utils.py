@@ -71,13 +71,13 @@ class Validater:
                 print(f"{alias} refused, return: {prompt['refuse']}")
 
             elif prompt["failed"] in match_results:
-                print(f"failed and please re-request later, return: {prompt['failed']}")
+                print(f"failed and please retry later, return: {prompt['failed']}")
 
             elif prompt["success"] in match_results:
                 print(f"{alias} runs successfully, return: {prompt['success']}")
 
             else:
-                print(f"{alias} returns: {match_results or None}")
+                print(f"{alias} returns: {match_results[0] or None}")
             ###
 
             return resp

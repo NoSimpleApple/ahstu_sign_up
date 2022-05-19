@@ -13,7 +13,7 @@ prompt = {
     "has_report": "每次填报间隔时间应不能小于4小时",
     "failed": ""
 }
-pattern = r"content.*?((?<=\').*?(?=\'))"
+pattern = r"content.*?(?<=\')(.*?)(?=\')"
 
 
 def _ext_resubmit_flag(text):

@@ -14,7 +14,7 @@ prompt = {
     "has_report": "只能0点至16点可以填报",
     "failed": ""
 }
-pattern = r"content.*?((?<=\').*?(?=\'))"
+pattern = r"content.*?(?<=\')(.*?)(?=\')"
 
 static_data = {
     "GetAreaUrl": "/SPCP/Web/Report/GetArea",

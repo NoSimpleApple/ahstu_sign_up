@@ -8,10 +8,10 @@ from utils import StuInfo, Url, Validater
 prompt = {
     "success": "",
     "refuse": "",
-    "failed": "",
+    "failed": "输入不能为空!",
     "has_report": ""
 }
-pattern = r"content.*?((?<=\').*?(?=\'))"
+pattern = r"content.*?(?<=\')(.*?)(?=\')"
 
 
 def _gene_vali_code():
