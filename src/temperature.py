@@ -1,11 +1,11 @@
 # 温度填报
 
 import requests
-import re
 import datetime
 import random
 
-from utils import Url, Validater
+from utils import Url, Validater, ext_resubmit_flag
+
 
 prompt = {
     "success": "填报成功",
@@ -14,11 +14,6 @@ prompt = {
     "failed": ""
 }
 pattern = r"content.*?(?<=\')(.*?)(?=\')"
-
-
-def _ext_resubmit_flag(text):
-    return re.findall(pattern=r'<input name="ReSubmiteFlag" type="hidden" value="(.*?)" />',
-                      string=text) or ""
 
 
 def _get_time_now():
@@ -44,7 +39,7 @@ def _prep_req_data(**kwargs):
 def main(session: "requests.Session"):
     text = session.get(url=Url.TEM_INFO,
                        allow_redirects=False).text
-    if isinstance(flag := _ext_resubmit_flag(text), dict):
+    if isinstance(flag := ext_resubmit_flag(text), dict):
         flag = flag[0]
     data_ = _prep_req_data(ReSubmiteFlag=flag)
 

@@ -5,7 +5,7 @@ import json
 
 import requests
 
-from utils import Url, Validater, Config
+from utils import Url, Validater, Config, ext_resubmit_flag
 
 
 prompt = {
@@ -38,12 +38,11 @@ class _RatioData:
         return cls(*tup)
 
 
-def _ext_resubmit_flag(text):
-    return re.findall(pattern=r'<input name="ReSubmiteFlag" type="hidden" value="(.*?)" />',
-                      string=text) or ""
-
-
 def _build_pz_data():
+    ...
+
+
+def _build_fin_data():
     ...
 
 

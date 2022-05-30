@@ -82,3 +82,8 @@ class Validater:
             return resp
 
         return wrapper
+
+
+def ext_resubmit_flag(text):
+    return re.findall(pattern=r'<input name="ReSubmiteFlag" type="hidden" value="(.*?)" />',
+                      string=text) or ""
