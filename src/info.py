@@ -5,7 +5,7 @@ import json
 
 import requests
 
-from utils import Url, Validater
+from utils import Url, Validater, Config
 
 
 prompt = {
@@ -48,5 +48,5 @@ def _build_pz_data():
 
 
 @Validater(prompt_dict=prompt, pattern=pattern, proc_alias="students info report")
-def main(session: "requests.Session"):
+def main(session: "requests.Session", config: Config):
     text = session.get()

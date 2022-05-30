@@ -1,7 +1,8 @@
 import typing
+import dataclasses
 import re
 import sys
-import pathlib
+import configparser
 
 import requests
 
@@ -9,6 +10,8 @@ UA_WIN = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 " \
          "(KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36"
 UA_LINUX = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 " \
            "(KHTML, like Gecko) Chrome/99.0.4855.102 Safari/537.36"
+
+Config: typing.TypeAlias = configparser.RawConfigParser
 
 
 def default_header():
@@ -29,16 +32,12 @@ def default_header():
     return header
 
 
+@dataclasses.dataclass(slots=True)
 class Url:
     LOGIN = "http://xgb.ahstu.edu.cn/spcp/web"
     CHOOSE_SYS = "http://xgb.ahstu.edu.cn/SPCP/Web/Account/ChooseSys"
     TEM_INFO = "http://xgb.ahstu.edu.cn/SPCP/Web/Temperature/StuTemperatureInfo"
     INFO_REPORT = "http://xgb.ahstu.edu.cn/SPCP/Web/Report/Index"
-
-
-class StuInfo:
-    USERNAME = ""
-    PASSWORD = ""
 
 
 class Validater:
@@ -63,7 +62,7 @@ class Validater:
             match_results = re.findall(pattern=self.pattern,
                                        string=text)
 
-            # TODO: this block need to refactor
+            # TODO: this part need to refactor
             if prompt["has_report"] in match_results:
                 print(f"found that you had reported previously, return: {prompt['has_report']}")
 
@@ -77,7 +76,7 @@ class Validater:
                 print(f"{alias} runs successfully, return: {prompt['success']}")
 
             else:
-                print(f"{alias} returns: {match_results[0] or None}")
+                print(f"{alias} returns: {match_results[0] if match_results else None}")
             ###
 
             return resp

@@ -1,17 +1,18 @@
 import requests
 import requests.cookies
 
+import _config
 import login
 import temperature
 import info
 import utils
 
 
-def main():
+def main(config):
     sess = requests.Session()
     sess.headers = utils.default_header()
 
-    login_resp = login.main(sess)
+    login_resp = login.main(sess, config)
 
     sess.headers["Referer"] = utils.Url.CHOOSE_SYS
     tem_resp = temperature.main(sess)
@@ -20,4 +21,11 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    path = "./conf"
+    try:
+        cfgs = _config.config(path)
+    except FileNotFoundError:
+        print(f"no valid configure file found in path {path}")
+    else:
+        for cfg in _config.config(path):
+            main(cfg)

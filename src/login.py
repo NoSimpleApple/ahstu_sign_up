@@ -3,7 +3,7 @@ import random
 import requests
 import requests.auth
 
-from utils import StuInfo, Url, Validater
+from utils import Url, Validater, Config
 
 prompt = {
     "success": "",
@@ -36,7 +36,7 @@ class SignUpAuth(requests.auth.AuthBase):
 
 
 @Validater(prompt_dict=prompt, pattern=pattern, proc_alias="logon")
-def main(session: "requests.Session"):
+def main(session: "requests.Session", config: Config):
     try:
         test_rsp = session.get(url=Url.LOGIN,
                                timeout=5)
@@ -62,8 +62,8 @@ def main(session: "requests.Session"):
         print("check your local network configure")
         raise
 
-    data_ = _warp_req_data(StuInfo.USERNAME,
-                           StuInfo.PASSWORD,
+    data_ = _warp_req_data(config.get("Common", "txtUid"),
+                           config.get("Common", "txtPwd"),
                            str(_gene_vali_code()))
 
     resp = session.post(url=Url.LOGIN,
