@@ -89,7 +89,7 @@ class _RadioData(_BaseData):
 
     @property
     def fmt_pz_data(self):
-        ...
+        return NotImplemented
 
     @property
     def fmt_req_data(self) -> dict[str, str]:
@@ -97,7 +97,7 @@ class _RadioData(_BaseData):
 
         if not ratio_x:
             raise ValueError("the field ratio_x got an unexpected void")
-        return {ratio_x: self.selected_id}
+        return {ratio_x: self.selected_id if self.selected_id else ""}
 
 
 @dataclasses.dataclass(repr=True, init=True, kw_only=True, slots=True)
@@ -108,7 +108,7 @@ class _TextData(_BaseData):
 
     @property
     def fmt_pz_data(self):
-        ...
+        return NotImplemented
 
     @property
     def fmt_req_data(self) -> dict[str, str]:
@@ -213,4 +213,4 @@ def main(session: "requests.Session", config: "Config"):
                               headers=default_header(),
                               data=req_data)
 
-    return resp
+    return resp_post
