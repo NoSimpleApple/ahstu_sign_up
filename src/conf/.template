@@ -34,6 +34,7 @@ SpecialtyName =
 # 专业全称+班级号码，如食品质量与安全110
 ClassName =
 
+[Required]
 # 手机号
 MoveTel =
 
@@ -82,13 +83,21 @@ FaCountyName =
 # 其他
 Other = 无
 
+[Text]
 # 实习学习具体单位名称，请自行发挥
 text_4 =
 
 # 未返校原因，后面填写本人在校即不用填写
+# options:
+#          1、开学返校后近期经请假离校
+#          2、开学后未返校
+#          3、其他
 text_2 =
 
-[Ratio]
+# 位置变化事由
+text_5 =
+
+[Radio]
 # 本人是否在校
 # options：是/否
 radio_1 =
@@ -100,3 +109,9 @@ radio_1 =
 #          3、2-14天内做过核酸检测
 #          4、超过14天未作核酸检测
 radio_9 =
+
+# 当前位置（较前一日）是否有变化?
+# options:
+#          1、是
+#          2、否
+radio_3 =

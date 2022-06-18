@@ -26,6 +26,8 @@ if __name__ == '__main__':
         cfgs = _config.config(path)
     except FileNotFoundError:
         print(f"no valid configure file found in path {path}")
+        exit(1)
     else:
         for cfg in _config.config(path):
+            print(f"--------------User: {cfg['Common']['txtUid']}----------------")
             main(cfg)
