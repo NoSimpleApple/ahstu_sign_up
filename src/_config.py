@@ -10,6 +10,7 @@ def config(cfgs_path_root: str):
 
     def read_cfg(cfg_path):
         cfg = configparser.ConfigParser()
+        cfg.optionxform = lambda optionstr: optionstr
         cfg.read(cfg_path, encoding="utf-8")
         return cfg
 

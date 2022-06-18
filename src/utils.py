@@ -1,8 +1,8 @@
-import typing
 import dataclasses
 import re
 import sys
 import configparser
+from typing import Callable, TypeAlias
 
 import requests
 
@@ -11,7 +11,7 @@ UA_WIN = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 " \
 UA_LINUX = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 " \
            "(KHTML, like Gecko) Chrome/99.0.4855.102 Safari/537.36"
 
-Config: typing.TypeAlias = configparser.RawConfigParser
+Config: TypeAlias = configparser.RawConfigParser
 
 
 def default_header():
@@ -46,7 +46,7 @@ class Validater:
         self.pattern = pattern
         self.alias = proc_alias
 
-    def __call__(self, func: typing.Callable[..., "requests.Response"], ):
+    def __call__(self, func: Callable[..., "requests.Response"], ):
 
         def wrapper(*args, **kwargs) -> "requests.Response":
             prompt = self.prompt

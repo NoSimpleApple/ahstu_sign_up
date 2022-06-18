@@ -17,7 +17,7 @@ def main(config):
     sess.headers["Referer"] = utils.Url.CHOOSE_SYS
     tem_resp = temperature.main(sess)
 
-    # info_resp = info.main(sess)
+    info_resp = info.main(sess, config)
 
 
 if __name__ == '__main__':
