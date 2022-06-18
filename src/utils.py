@@ -85,5 +85,5 @@ class Validater:
 
 
 def ext_resubmit_flag(text):
-    return re.findall(pattern=r'<input name="ReSubmiteFlag" type="hidden" value="(.*?)" />',
-                      string=text) or ""
+    return (re.findall(pattern=r'<input name="ReSubmiteFlag" type="hidden" value="(.*?)" />',
+                       string=text) or [""]).pop()

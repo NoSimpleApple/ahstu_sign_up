@@ -8,12 +8,12 @@ from typing import Optional, Literal, NewType, TypeAlias, Mapping, Sequence
 import requests
 from lxml import etree
 
-from utils import Url, Validater, Config, ext_resubmit_flag
+from utils import Url, Validater, Config, ext_resubmit_flag, default_header
 
 prompt = {
     "success": "提交成功",
-    "refuse": "",
-    "has_report": "只能0点至16点可以填报",
+    "refuse": "只能0点至16点可以填报",
+    "has_report": "",
     "failed": ""
 }
 pattern = r"content.*?(?<=\')(.*?)(?=\')"
@@ -184,6 +184,7 @@ def _merge_req_data(*args: Mapping[str, str]) -> dict[str, str]:
 @Validater(prompt_dict=prompt, pattern=pattern, proc_alias="students info report")
 def main(session: "requests.Session", config: "Config"):
     resp = session.get(url=Url.INFO_REPORT,
+                       headers=default_header(),
                        timeout=5)
 
     if text_type := resp.headers.get("Content-Type"):
@@ -191,7 +192,7 @@ def main(session: "requests.Session", config: "Config"):
             pass
 
     tree = etree.HTML(resp.text)
-
+    resubmit_flag = ext_resubmit_flag(resp.text)
     normal_radio_data = _build_data_by_raw_conf(ThRightClass.TH_RIGHT_VALIDATE_RADIO_LIST,
                                                 __raw_conf=config["Radio"],
                                                 __html_tree=tree)
@@ -202,11 +203,14 @@ def main(session: "requests.Session", config: "Config"):
                                         __raw_conf=config["Text"],
                                         __html_tree=tree)
     # pz_data = None
-    ex_data = {"StudentId": config["Common"]["txtUid"]}
+    ex_data = {"StudentId": config["Common"]["txtUid"],
+               "ReSubmiteFlag": resubmit_flag}
 
     req_data = _merge_req_data(dict(config["StuInfo"]), dict(config["Required"]),
                                *map(lambda _x_data: _x_data.fmt_req_data, normal_radio_data + text_data + danger_data),
                                ex_data, fields_mixin, fields_danger_radio_options)
-    print(req_data)
+    resp_post = requests.post(url=Url.INFO_REPORT,
+                              headers=default_header(),
+                              data=req_data)
 
     return resp

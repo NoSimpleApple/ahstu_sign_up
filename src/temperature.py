@@ -4,7 +4,7 @@ import requests
 import datetime
 import random
 
-from utils import Url, Validater, ext_resubmit_flag
+from utils import Url, Validater, ext_resubmit_flag, default_header
 
 
 prompt = {
@@ -38,11 +38,13 @@ def _prep_req_data(**kwargs):
 @Validater(prompt_dict=prompt, pattern=pattern, proc_alias="temperature sign-up")
 def main(session: "requests.Session"):
     text = session.get(url=Url.TEM_INFO,
+                       headers=default_header(),
                        allow_redirects=False).text
     if isinstance(flag := ext_resubmit_flag(text), dict):
         flag = flag[0]
     data_ = _prep_req_data(ReSubmiteFlag=flag)
 
     resp = session.post(url=Url.TEM_INFO,
+                        headers=default_header(),
                         data=data_)
     return resp
