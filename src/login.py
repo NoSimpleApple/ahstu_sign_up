@@ -55,12 +55,12 @@ def main(session: "requests.Session", config: Config) -> T_Response:
 
     except requests.TooManyRedirects:
         print("redirects too many, maybe your proxies performs faulty?")
-        exit(2)
+        exit(255)
 
     except (requests.ConnectionError,
             requests.ConnectTimeout):
         print("check your local network configure")
-        raise
+        exit(255)
 
     data_ = _warp_req_data(config.get("Common", "txtUid"),
                            config.get("Common", "txtPwd"),
