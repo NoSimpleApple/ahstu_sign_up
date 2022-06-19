@@ -46,7 +46,8 @@ class ThRightClass(enum.Enum):
 
 
 T_th_right_class: TypeAlias = ThRightClass
-T_node = NewType("T_node", Literal["text", "radio"])
+SupportedNodeAttr = NewType("SupportedNodeAttr", Literal["text", "radio"])
+PZDataItem = NewType("PZDataItem", Mapping[str, str])
 
 
 @dataclasses.dataclass(repr=True, init=True, kw_only=True, slots=True)
@@ -58,13 +59,13 @@ class _BaseData:
     # SelectedId in field PZData, uuid, @value
     selected_id: Optional[str]
     # @//input[contains(@name, "radio")]/@type
-    node_type: T_node
+    node_type: SupportedNodeAttr
 
     # radio type rets 0, and text rets 2
     # option_type: Literal["0", "2"]
 
     @property
-    def fmt_pz_data(self):
+    def fmt_pz_data_raw(self):
         return NotImplemented
 
     @property
@@ -80,12 +81,17 @@ class _BaseData:
 class _RadioData(_BaseData):
     ratio_x: str
     is_selected: bool
-    option_type = "0"
-    node_type = "radio"
+    option_type: str = "0"
+    node_type: str = "radio"
 
     @property
-    def fmt_pz_data(self):
-        return NotImplemented
+    def fmt_pz_data_raw(self):
+        if not self.is_selected:
+            return NotImplemented
+        return {"OptionName": self.option_name,
+                "SelectId": self.selected_id,
+                "TitleId": self.title_id,
+                "OptionType": self.option_type}
 
     @property
     def fmt_req_data(self) -> dict[str, str]:
@@ -99,12 +105,17 @@ class _RadioData(_BaseData):
 @dataclasses.dataclass(repr=True, init=True, kw_only=True, slots=True)
 class _TextData(_BaseData):
     text_x: str
-    option_type = "2"
-    node_type = "text"
+    option_type: str = "2"
+    node_type: str = "text"
 
     @property
-    def fmt_pz_data(self):
-        return NotImplemented
+    def fmt_pz_data_raw(self):
+        if not self.option_name:
+            return NotImplemented
+        return {"OptionName": self.option_name,
+                "SelectId": self.selected_id,
+                "TitleId": self.title_id,
+                "OptionType": self.option_type}
 
     @property
     def fmt_req_data(self) -> dict[str, str]:
@@ -169,8 +180,8 @@ def _build_data_by_raw_conf(class_tag: T_th_right_class | Sequence[ThRightClass]
     return pair
 
 
-def _build_pz_data():
-    ...
+def _build_pz_data(*args: PZDataItem):
+    return json.dumps(tuple(*args))
 
 
 def _merge_req_data(*args: Mapping[str, str]) -> dict[str, str]:
@@ -204,9 +215,11 @@ def main(session: "requests.Session", config: "Config") -> T_Response:
         "GetAreaUrl": "/SPCP/Web/Report/GetArea",
         "Other": "无"
     }
-    # pz_data = None
+    pz_data = _build_pz_data(*map(lambda _x_data: _x_data.fmt_pz_data_raw,
+                                  normal_radio_data_raw, danger_radio_data_raw, text_data_raw))
     ex_data = {"StudentId": config["Common"]["txtUid"],
-               "ReSubmiteFlag": ext_resubmit_flag(resp.text)}
+               "ReSubmiteFlag": ext_resubmit_flag(resp.text),
+               "PZData": pz_data}
 
     req_data = _merge_req_data(dict(config["StuInfo"]), dict(config["Required"]),
                                *option_data,
