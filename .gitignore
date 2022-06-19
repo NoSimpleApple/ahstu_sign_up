@@ -1,0 +1,8 @@
+# 包含个人信息
+/src/conf/*.ini
+
+# python编译文件
+/src/__pycache__/*
+
+# 短代码测试
+/src/_draft*.py
