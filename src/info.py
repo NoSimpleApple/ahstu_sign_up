@@ -8,25 +8,17 @@ from typing import Optional, Literal, NewType, TypeAlias, Mapping, Sequence
 import requests
 from lxml import etree
 
-from utils import Url, Validater, Config, ext_resubmit_flag, default_header
+from utils import Url, Validater, Config, ext_resubmit_flag, T_Response
 
 prompt = {
     "success": "提交成功",
-    "refuse": "只能0点至16点可以填报",
-    "has_report": "",
+    "refuse": "只能0点至16点可以填报！",
+    "has_report": "请勿重复提交！",
     "failed": ""
 }
 pattern = r"content.*?(?<=\')(.*?)(?=\')"
 xpath_th_right_phone = "//div[contains(@class,'th_right phone')]//input[@id and @value]"
 xpath_ratio_required = "//div[@class='th_right required validate radio_list']//input[@type='radio']"
-
-fields_mixin = {
-    "GetAreaUrl": "/SPCP/Web/Report/GetArea",
-    "radioCount": "9",
-    "checkboxCount": "0",
-    "blackCount": "10",
-    "Other": "无"
-}
 
 # 不作为可选配置
 fields_danger_radio_options = {
@@ -77,6 +69,10 @@ class _BaseData:
 
     @property
     def fmt_req_data(self):
+        """
+        返回最终转入Request.data的数据字典, 保证value正确性
+        :return: dict[str, str]
+        """
         return NotImplemented
 
 
@@ -182,35 +178,40 @@ def _merge_req_data(*args: Mapping[str, str]) -> dict[str, str]:
 
 
 @Validater(prompt_dict=prompt, pattern=pattern, proc_alias="students info report")
-def main(session: "requests.Session", config: "Config"):
+def main(session: "requests.Session", config: "Config") -> T_Response:
     resp = session.get(url=Url.INFO_REPORT,
-                       headers=default_header(),
                        timeout=5)
 
-    if text_type := resp.headers.get("Content-Type"):
-        if not text_type.find("text/html"):
-            pass
+    if resp.headers.get("Content-Type").find("text/html") < 0:
+        raise TypeError("cannot find an valid html file to construct etree")
 
     tree = etree.HTML(resp.text)
-    resubmit_flag = ext_resubmit_flag(resp.text)
-    normal_radio_data = _build_data_by_raw_conf(ThRightClass.TH_RIGHT_VALIDATE_RADIO_LIST,
-                                                __raw_conf=config["Radio"],
-                                                __html_tree=tree)
-    danger_data = _build_data_by_raw_conf(ThRightClass.TH_RIGHT_VALIDATE_RADIO_LIST,
-                                          __raw_conf=fields_danger_radio_options,
-                                          __html_tree=tree)
-    text_data = _build_data_by_raw_conf(ThRightClass.TH_RIGHT,
-                                        __raw_conf=config["Text"],
-                                        __html_tree=tree)
+    normal_radio_data_raw = _build_data_by_raw_conf(ThRightClass.TH_RIGHT_VALIDATE_RADIO_LIST,
+                                                    __raw_conf=config["Radio"],
+                                                    __html_tree=tree)
+    danger_radio_data_raw = _build_data_by_raw_conf(ThRightClass.TH_RIGHT_VALIDATE_RADIO_LIST,
+                                                    __raw_conf=fields_danger_radio_options,
+                                                    __html_tree=tree)
+    text_data_raw = _build_data_by_raw_conf(ThRightClass.TH_RIGHT,
+                                            __raw_conf=config["Text"],
+                                            __html_tree=tree)
+    option_data = tuple(map(lambda _x_data: _x_data.fmt_req_data,
+                            normal_radio_data_raw + text_data_raw + danger_radio_data_raw))
+    mixin_data = {
+        "radioCount": str(len(option_data) - len(text_data_raw)),
+        "blackCount": str(len(text_data_raw)),
+        "checkboxCount": "0",
+        "GetAreaUrl": "/SPCP/Web/Report/GetArea",
+        "Other": "无"
+    }
     # pz_data = None
     ex_data = {"StudentId": config["Common"]["txtUid"],
-               "ReSubmiteFlag": resubmit_flag}
+               "ReSubmiteFlag": ext_resubmit_flag(resp.text)}
 
     req_data = _merge_req_data(dict(config["StuInfo"]), dict(config["Required"]),
-                               *map(lambda _x_data: _x_data.fmt_req_data, normal_radio_data + text_data + danger_data),
-                               ex_data, fields_mixin, fields_danger_radio_options)
-    resp_post = requests.post(url=Url.INFO_REPORT,
-                              headers=default_header(),
-                              data=req_data)
+                               *option_data,
+                               ex_data, mixin_data, )
+    resp_post = session.post(url=Url.INFO_REPORT,
+                             data=req_data)
 
     return resp_post

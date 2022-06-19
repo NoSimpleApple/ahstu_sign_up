@@ -12,12 +12,12 @@ def main(config):
     sess = requests.Session()
     sess.headers = utils.default_header()
 
-    login_resp = login.main(sess, config)
+    login.main(sess, config)
 
     sess.headers["Referer"] = utils.Url.CHOOSE_SYS
-    tem_resp = temperature.main(sess)
+    temperature.main(sess)
 
-    info_resp = info.main(sess, config)
+    info.main(sess, config)
 
 
 if __name__ == '__main__':

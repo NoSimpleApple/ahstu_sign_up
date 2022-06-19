@@ -4,13 +4,12 @@ import requests
 import datetime
 import random
 
-from utils import Url, Validater, ext_resubmit_flag, default_header
-
+from utils import Url, Validater, ext_resubmit_flag, T_Response
 
 prompt = {
     "success": "填报成功",
     "refuse": "未在填报时间段（每天6点到20点）中，不能进行填报操作!",
-    "has_report": "每次填报间隔时间应不能小于4小时",
+    "has_report": "每次填报间隔时间应不能小于4小时!",
     "failed": ""
 }
 pattern = r"content.*?(?<=\')(.*?)(?=\')"
@@ -36,15 +35,13 @@ def _prep_req_data(**kwargs):
 
 
 @Validater(prompt_dict=prompt, pattern=pattern, proc_alias="temperature sign-up")
-def main(session: "requests.Session"):
+def main(session: "requests.Session") -> T_Response:
     text = session.get(url=Url.TEM_INFO,
-                       headers=default_header(),
                        allow_redirects=False).text
     if isinstance(flag := ext_resubmit_flag(text), dict):
         flag = flag[0]
     data_ = _prep_req_data(ReSubmiteFlag=flag)
 
     resp = session.post(url=Url.TEM_INFO,
-                        headers=default_header(),
                         data=data_)
     return resp

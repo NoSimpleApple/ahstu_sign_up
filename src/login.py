@@ -3,7 +3,7 @@ import random
 import requests
 import requests.auth
 
-from utils import Url, Validater, Config, default_header
+from utils import Url, Validater, Config, T_Response
 
 prompt = {
     "success": "",
@@ -36,10 +36,9 @@ class SignUpAuth(requests.auth.AuthBase):
 
 
 @Validater(prompt_dict=prompt, pattern=pattern, proc_alias="logon")
-def main(session: "requests.Session", config: Config):
+def main(session: "requests.Session", config: Config) -> T_Response:
     try:
         test_rsp = session.get(url=Url.LOGIN,
-                               headers=default_header(),
                                timeout=5)
 
         code = test_rsp.status_code
@@ -68,7 +67,6 @@ def main(session: "requests.Session", config: Config):
                            str(_gene_vali_code()))
 
     resp = session.post(url=Url.LOGIN,
-                        headers=default_header(),
                         data=data_,
                         allow_redirects=False,
                         auth=SignUpAuth())

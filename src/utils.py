@@ -12,6 +12,7 @@ UA_LINUX = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 " \
            "(KHTML, like Gecko) Chrome/99.0.4855.102 Safari/537.36"
 
 Config: TypeAlias = configparser.RawConfigParser
+T_Response: TypeAlias = requests.Response
 
 
 def default_header():
@@ -60,7 +61,7 @@ class Validater:
                 raise ValueError(err_info) from e
 
             match_results = re.findall(pattern=self.pattern,
-                                       string=text)
+                                       string=text) or ["return void"]
 
             # TODO: this part need to refactor
             if prompt["has_report"] in match_results:
@@ -76,7 +77,7 @@ class Validater:
                 print(f"{alias} runs successfully, return: {prompt['success']}")
 
             else:
-                print(f"{alias} returns: {match_results[0] if match_results else None}")
+                print(f"{alias} returns: {match_results.pop()}")
             ###
 
             return resp
