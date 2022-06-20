@@ -1,8 +1,12 @@
 import configparser
 import pathlib
+from typing import TypeAlias
 
 
-def config(cfgs_path_root: str):
+ConfPath: TypeAlias = pathlib.Path
+
+
+def config(cfgs_path_root: ConfPath):
     path = pathlib.Path(cfgs_path_root)
     if not (cfgs_path_list := sorted(path.glob("*.ini"))):
         raise FileNotFoundError(f"there is no valid configure file found"

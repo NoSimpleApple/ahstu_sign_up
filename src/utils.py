@@ -39,6 +39,7 @@ class Url:
     CHOOSE_SYS = "http://xgb.ahstu.edu.cn/SPCP/Web/Account/ChooseSys"
     TEM_INFO = "http://xgb.ahstu.edu.cn/SPCP/Web/Temperature/StuTemperatureInfo"
     INFO_REPORT = "http://xgb.ahstu.edu.cn/SPCP/Web/Report/Index"
+    PASSPORT = "http://xgb.ahstu.edu.cn/SPCP/Web/BackSchool/Index"
 
 
 class Validater:

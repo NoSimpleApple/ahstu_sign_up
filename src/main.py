@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import requests
 import requests.cookies
 
@@ -21,7 +23,7 @@ def main(config):
 
 
 if __name__ == '__main__':
-    path = "./conf"
+    path = Path(__file__).parent.joinpath("./conf")
     try:
         cfgs = _config.config(path)
     except FileNotFoundError:
