@@ -42,48 +42,50 @@ class Url:
     PASSPORT = "http://xgb.ahstu.edu.cn/SPCP/Web/BackSchool/Index"
 
 
-class Validater:
-    def __init__(self, prompt_dict, pattern, proc_alias):
-        self.prompt = prompt_dict
-        self.pattern = pattern
-        self.alias = proc_alias
+def validate(*, prompts, pattern, proc_alias):
+    def decorator(func):
 
-    def __call__(self, func: Callable[..., "requests.Response"], ):
+        def wrapper(*args, **kwargs):
+            nonlocal prompts
+            nonlocal proc_alias
+            nonlocal pattern
 
-        def wrapper(*args, **kwargs) -> "requests.Response":
-            prompt = self.prompt
-            alias = self.alias
             resp = func(*args, **kwargs)
-
             try:
                 text = getattr(resp, "text")
             except AttributeError as e:
                 err_info = "wrapped function should return an instance of requests.Response"
                 raise ValueError(err_info) from e
 
-            match_results = re.findall(pattern=self.pattern,
+            match_results = re.findall(pattern=pattern,
                                        string=text) or ["return void"]
-
-            # TODO: this part need to refactor
-            if prompt["has_report"] in match_results:
-                print(f"found that you had reported previously, return: {prompt['has_report']}")
-
-            elif prompt["refuse"] in match_results:
-                print(f"{alias} refused, return: {prompt['refuse']}")
-
-            elif prompt["failed"] in match_results:
-                print(f"failed and please retry later, return: {prompt['failed']}")
-
-            elif prompt["success"] in match_results:
-                print(f"{alias} runs successfully, return: {prompt['success']}")
-
-            else:
-                print(f"{alias} returns: {match_results.pop()}")
-            ###
+            _match_prompt(match_results)
 
             return resp
 
         return wrapper
+
+    def _match_prompt(seq_resp_text):
+        nonlocal prompts
+        nonlocal proc_alias
+
+        # TODO: this part need to refactor
+        if prompts["has_report"] in seq_resp_text:
+            print(f"found that you had reported previously, return: {prompts['has_report']}")
+
+        elif prompts["refuse"] in seq_resp_text:
+            print(f"{proc_alias} refused, return: {prompts['refuse']}")
+
+        elif prompts["failed"] in seq_resp_text:
+            print(f"failed and please retry later, return: {prompts['failed']}")
+
+        elif prompts["success"] in seq_resp_text:
+            print(f"{proc_alias} runs successfully, return: {prompts['success']}")
+
+        else:
+            print(f"{proc_alias} returns: {seq_resp_text.pop()}")
+
+    return decorator
 
 
 def ext_resubmit_flag(text):

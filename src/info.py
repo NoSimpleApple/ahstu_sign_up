@@ -8,7 +8,7 @@ from typing import Optional, Literal, NewType, TypeAlias, Mapping, Sequence
 import requests
 from lxml import etree
 
-from utils import Url, Validater, Config, ext_resubmit_flag, T_Response
+from utils import Url, validate, Config, ext_resubmit_flag, T_Response
 
 prompt = {
     "success": "提交成功！",
@@ -188,7 +188,7 @@ def _merge_req_data(*args: Mapping[str, str]) -> dict[str, str]:
     return dict(reduce(lambda f_kw, l_kw: f_kw | l_kw, args))
 
 
-@Validater(prompt_dict=prompt, pattern=pattern, proc_alias="students info report")
+@validate(prompts=prompt, pattern=pattern, proc_alias="the student info report")
 def main(session: "requests.Session", config: "Config") -> T_Response:
     resp = session.get(url=Url.INFO_REPORT,
                        timeout=5)

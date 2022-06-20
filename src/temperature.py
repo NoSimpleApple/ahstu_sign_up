@@ -4,7 +4,7 @@ import requests
 import datetime
 import random
 
-from utils import Url, Validater, ext_resubmit_flag, T_Response
+from utils import Url, validate, ext_resubmit_flag, T_Response
 
 prompt = {
     "success": "填报成功！",
@@ -34,7 +34,7 @@ def _prep_req_data(**kwargs):
                 **kwargs)
 
 
-@Validater(prompt_dict=prompt, pattern=pattern, proc_alias="temperature sign-up")
+@validate(prompts=prompt, pattern=pattern, proc_alias="the temperature sign-up")
 def main(session: "requests.Session") -> T_Response:
     text = session.get(url=Url.TEM_INFO,
                        allow_redirects=False).text

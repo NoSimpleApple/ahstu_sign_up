@@ -3,7 +3,7 @@ import random
 import requests
 import requests.auth
 
-from utils import Url, Validater, Config, T_Response
+from utils import Url, validate, Config, T_Response
 
 prompt = {
     "success": "",
@@ -35,7 +35,7 @@ class SignUpAuth(requests.auth.AuthBase):
         return req
 
 
-@Validater(prompt_dict=prompt, pattern=pattern, proc_alias="logon")
+@validate(prompts=prompt, pattern=pattern, proc_alias="logon")
 def main(session: "requests.Session", config: Config) -> T_Response:
     try:
         test_rsp = session.get(url=Url.LOGIN,
