@@ -11,7 +11,7 @@ from lxml import etree
 from utils import Url, Validater, Config, ext_resubmit_flag, T_Response
 
 prompt = {
-    "success": "提交成功",
+    "success": "提交成功！",
     "refuse": "只能0点至16点可以填报！",
     "has_report": "请勿重复提交！",
     "failed": ""

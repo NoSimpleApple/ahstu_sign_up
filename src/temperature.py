@@ -7,7 +7,7 @@ import random
 from utils import Url, Validater, ext_resubmit_flag, T_Response
 
 prompt = {
-    "success": "填报成功",
+    "success": "填报成功！",
     "refuse": "未在填报时间段（每天6点到20点）中，不能进行填报操作!",
     "has_report": "每次填报间隔时间应不能小于4小时!",
     "failed": ""
