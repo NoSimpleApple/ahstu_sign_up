@@ -20,6 +20,7 @@ def main(config):
     temperature.main(sess)
 
     info.main(sess, config)
+    sess.close()
 
 
 if __name__ == '__main__':
