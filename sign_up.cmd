@@ -2,8 +2,8 @@
 
 cd /d %~dp0
 
-if exist ".\dist\main.exe" (
-    .\dist\main.exe
+if exist ".\main\main.exe" (
+    .\main\main.exe
 ) else (
     echo ERROR: main.exe not found
 )
