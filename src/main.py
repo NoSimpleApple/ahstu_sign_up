@@ -25,7 +25,8 @@ def main(config):
 
 
 if __name__ == '__main__':
-    path = Path(__file__).parent.joinpath("./conf")
+    path = Path(__file__).parent.parent.joinpath("./conf")
+
     try:
         cfgs = _config.config(path)
     except FileNotFoundError:
