@@ -6,3 +6,7 @@
 
 # 短代码测试
 /src/_draft*.py
+test/
+
+# idea
+.idea/

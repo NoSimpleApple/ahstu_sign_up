@@ -1,0 +1,10 @@
+Windows:
+    1. 解压缩到任意目录 （一定要解压缩！）
+    2. 在src/conf文件夹内找到.template文件, 复制一份并重新命名为xxx.ini
+    3. 打开xxx.ini, 在其中填写个人的填报信息，并保存（不要改变文件字符编码）
+    4. 双击sign_up.cmd文件
+
+Linux:
+    1,2,3步同Windows
+    4. 根据需要自行创建python虚拟环境, 已提供requirements.txt
+    5. 激活虚拟环境后运行./src/main.py 即可
