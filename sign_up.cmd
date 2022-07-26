@@ -2,20 +2,13 @@
 
 cd /d %~dp0
 
-if exist ".\venv\Scripts\activate" (
-    call .\venv\Scripts\activate
+if exist ".\dist\main.exe" (
+    .\dist\main.exe
 ) else (
-    echo ERROR: cannot activate the virtual environment
-    goto exit
-)
-
-if exist ".\src\main.py" (
-    python .\src\main.py
-) else (
-    echo ERROR: main.py not found
+    echo ERROR: main.exe not found
 )
 goto exit
 
 :exit
-pause
+echo ... & pause
 exit
