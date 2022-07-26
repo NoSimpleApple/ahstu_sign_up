@@ -1,5 +1,5 @@
-# 包含个人信息
 /src/conf/*.ini
+/static/
 
 # python编译文件
 /src/__pycache__/*
