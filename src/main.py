@@ -1,4 +1,5 @@
 from pathlib import Path
+import sys
 
 import requests
 import requests.cookies
@@ -29,7 +30,9 @@ if __name__ == '__main__':
         cfgs = _config.config(path)
     except FileNotFoundError:
         print(f"no valid configure file found in path {path}")
-        exit(1)
+
+        # 使用pyinstaller打包时builtins.exit符号缺失，原因未知
+        sys.exit(1)
     else:
         for cfg in _config.config(path):
             print(f"--------------User: {cfg['Common']['txtUid']}----------------")
