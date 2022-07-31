@@ -32,7 +32,8 @@ if __name__ == '__main__':
     except FileNotFoundError:
         print(f"no valid configure file found in path {path}")
 
-        # 使用pyinstaller打包时builtins.exit符号缺失，原因未知
+        # review: b5a27eb4
+        # pyinstaller在打包时不会import内置的site module(可能使用了自己的)，故在builtins里找不到exit符号
         sys.exit(1)
     else:
         for cfg in _config.config(path):
